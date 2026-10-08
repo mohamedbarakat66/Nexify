@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Register | Nexify Courses</title>
+
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- Header -->
+    <header class="header">
+
+        <div class="container header-inner">
+
+            <a href="index.html" class="logo">
+                <i class="fa-solid fa-graduation-cap"></i>
+                Nexify
+            </a>
+
+            <nav id="nav" class="nav">
+
+                <a href="index.html">Home</a>
+
+                <a href="index.html#courses">
+                    Courses
+                </a>
+
+                <a href="index.html#testimonials">
+                    Testimonials
+                </a>
+
+                <a href="register.html">
+                    Register
+                </a>
+
+            </nav>
+
+            <div class="header-actions">
+
+                <button id="theme-btn"
+                    class="icon-btn"
+                    aria-label="Toggle theme">
+
+                    <i class="fa-solid fa-moon"></i>
+
+                </button>
+
+                <button id="menu-btn"
+                    class="icon-btn menu-btn"
+                    aria-label="Toggle menu">
+
+                    <i class="fa-solid fa-bars"></i>
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </header>
+
+
+    <!-- Register Section -->
+    <section class="section">
+
+        <div class="container">
+
+            <div class="section-heading">
+
+                <p>JOIN NEXIFY</p>
+
+                <h1 class="section-title">
+                    Register In A Course
+                </h1>
+
+                <span>
+                    Fill in your information to join your favorite course.
+                </span>
+
+            </div>
+
+
+            <!-- Registration Form -->
+            <form id="register-form"
+                class="form"
+                novalidate>
+
+
+                <!-- Name -->
+                <div class="field">
+
+                    <label for="name">
+                        Full Name
+                    </label>
+
+                    <input
+                        type="text"
+                        id="name"
+                        placeholder="Your name"
+                    >
+
+                    <small class="error"></small>
+
+                </div>
+
+
+                <!-- Email -->
+                <div class="field">
+
+                    <label for="email">
+                        Email
+                    </label>
+
+                    <input
+                        type="email"
+                        id="email"
+                        placeholder="you@example.com"
+                    >
+
+                    <small class="error"></small>
+
+                </div>
+
+
+                <!-- Phone -->
+                <div class="field">
+
+                    <label for="phone">
+                        Phone
+                    </label>
+
+                    <input
+                        type="text"
+                        id="phone"
+                        placeholder="01012345678"
+                    >
+
+                    <small class="error"></small>
+
+                </div>
+
+
+                <!-- Course -->
+                <div class="field">
+
+                    <label for="course">
+                        Course
+                    </label>
+
+                    <select id="course">
+
+                        <option value="">
+                            -- Choose a course --
+                        </option>
+
+                    </select>
+
+                    <small class="error"></small>
+
+                </div>
+
+
+                <button
+                    type="submit"
+                    class="btn">
+
+                    Register
+
+                </button>
+
+
+                <p
+                    id="form-success"
+                    class="success">
+                </p>
+
+            </form>
+
+        </div>
+
+    </section>
+
+
+    <!-- Footer -->
+    <footer class="footer">
+
+        <div class="container">
+
+            <h2 class="logo">
+
+                <i class="fa-solid fa-graduation-cap"></i>
+
+                Nexify
+
+            </h2>
+
+            <p>
+                Learn. Practice. Succeed.
+            </p>
+
+            <p class="copyright">
+                &copy; 2026 Nexify. All rights reserved.
+            </p>
+
+        </div>
+
+    </footer>
+
+
+    <script src="register.js"></script>
+
+</body>
+
+</html>
