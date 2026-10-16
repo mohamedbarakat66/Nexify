@@ -1,3 +1,4 @@
+
 /* =====================================================
    1) Open & Close Menu
    ==> Conditions + Control CSS using JS
@@ -6,54 +7,53 @@
 const menuBtn = document.getElementById("menu-btn");
 const nav = document.getElementById("nav");
 
-menuBtn.addEventListener("click", () => {
+if (menuBtn && nav) {
 
-    if (nav.style.maxHeight && nav.style.maxHeight !== "0px") {
+    menuBtn.addEventListener("click", () => {
 
-        nav.style.maxHeight = "0px";
+        nav.classList.toggle("open");
 
-        menuBtn.innerHTML = '<i class="fa-solid fa-bars"></i>';
+        const isOpen = nav.classList.contains("open");
 
-    } else {
+        menuBtn.innerHTML = isOpen
+            ? '<i class="fa-solid fa-xmark"></i>'
+            : '<i class="fa-solid fa-bars"></i>';
 
-        nav.style.maxHeight = nav.scrollHeight + "px";
+        menuBtn.setAttribute("aria-expanded", isOpen);
 
-        menuBtn.innerHTML = '<i class="fa-solid fa-xmark"></i>';
-    }
+    });
 
-});
+    nav.querySelectorAll("a").forEach((link) => {
 
+        link.addEventListener("click", () => {
 
-/* Close menu when clicking a link */
+            nav.classList.remove("open");
 
-nav.querySelectorAll("a").forEach((link) => {
+            menuBtn.innerHTML =
+                '<i class="fa-solid fa-bars"></i>';
 
-    link.addEventListener("click", () => {
+            menuBtn.setAttribute("aria-expanded", "false");
 
-        if (window.innerWidth <= 800) {
+        });
 
-            nav.style.maxHeight = "0px";
+    });
 
-            menuBtn.innerHTML = '<i class="fa-solid fa-bars"></i>';
+    window.addEventListener("resize", () => {
+
+        if (window.innerWidth > 700) {
+
+            nav.classList.remove("open");
+
+            menuBtn.innerHTML =
+                '<i class="fa-solid fa-bars"></i>';
+
+            menuBtn.setAttribute("aria-expanded", "false");
+
         }
 
     });
 
-});
-
-
-/* Reset menu when screen becomes large */
-
-window.addEventListener("resize", () => {
-
-    if (window.innerWidth > 800) {
-
-        nav.style.maxHeight = "";
-
-        menuBtn.innerHTML = '<i class="fa-solid fa-bars"></i>';
-    }
-
-});
+}
 
 
 /* =====================================================
@@ -64,22 +64,18 @@ window.addEventListener("resize", () => {
 const themeBtn = document.getElementById("theme-btn");
 const root = document.documentElement;
 
-
 function applyTheme(theme) {
 
     root.setAttribute("data-theme", theme);
 
     localStorage.setItem("theme", theme);
 
-    if (theme === "dark") {
+    if (themeBtn) {
 
-        themeBtn.innerHTML =
-            '<i class="fa-solid fa-sun"></i>';
+        themeBtn.innerHTML = theme === "dark"
+            ? '<i class="fa-solid fa-sun"></i>'
+            : '<i class="fa-solid fa-moon"></i>';
 
-    } else {
-
-        themeBtn.innerHTML =
-            '<i class="fa-solid fa-moon"></i>';
     }
 
 }
@@ -94,20 +90,20 @@ applyTheme(savedTheme);
 
 /* Change theme */
 
-themeBtn.addEventListener("click", () => {
+if (themeBtn) {
 
-    const currentTheme = root.getAttribute("data-theme");
+    themeBtn.addEventListener("click", () => {
 
-    if (currentTheme === "dark") {
+        const currentTheme =
+            root.getAttribute("data-theme");
 
-        applyTheme("light");
+        applyTheme(
+            currentTheme === "dark" ? "light" : "dark"
+        );
 
-    } else {
+    });
 
-        applyTheme("dark");
-    }
-
-});
+}
 
 
 /* =====================================================
@@ -127,7 +123,6 @@ const coursesStatus =
 const testimonialsGrid =
     document.getElementById("testimonials-grid");
 
-
 let courses = [];
 
 
@@ -138,36 +133,35 @@ async function getData() {
         const response = await fetch(API_URL);
 
         if (!response.ok) {
-
-            throw new Error(
-                "Request failed: " + response.status
-            );
+            throw new Error("Request failed: " + response.status);
         }
 
         const data = await response.json();
 
-        /* Store courses */
+        courses = Array.isArray(data.cards)
+            ? data.cards
+            : [];
 
-        courses = data.cards;
+        const testimonials = Array.isArray(data.testimonials)
+            ? data.testimonials
+            : [];
 
-        /* Display courses */
+        renderCourses(courses);
+        renderTestimonials(testimonials);
 
-        renderCourses(data.cards);
-
-        /* Display testimonials */
-
-        renderTestimonials(data.testimonials);
-
-        /* Hide loading message */
-
-        coursesStatus.style.display = "none";
+        if (coursesStatus) {
+            coursesStatus.style.display = "none";
+        }
 
     } catch (error) {
 
-        coursesStatus.textContent =
-            "Could not load courses. Please try again later.";
+        if (coursesStatus) {
+            coursesStatus.textContent =
+                "Could not load courses. Please try again later.";
+        }
 
-        console.error(error);
+        console.error("API Error:", error);
+
     }
 
 }
@@ -179,32 +173,32 @@ async function getData() {
 
 function renderCourses(cards) {
 
-    coursesGrid.innerHTML = cards
-        .map((card, index) => {
+    if (!coursesGrid) return;
 
-            return `
-                <div class="card">
+    coursesGrid.innerHTML = cards.map((card, index) => {
 
-                    <i class="${card.icon} card-icon"></i>
+        return `
+            <div class="card">
 
-                    <h3>${card.title}</h3>
+                <i class="${card.icon || ""} card-icon"></i>
 
-                    <p>
-                        ${card.description}
-                    </p>
+                <h3>${card.title || "Untitled Course"}</h3>
 
-                    <button
-                        class="details-btn"
-                        data-index="${index}"
-                    >
-                        View Details
-                    </button>
+                <p>
+                    ${card.description || ""}
+                </p>
 
-                </div>
-            `;
+                <button
+                    class="details-btn"
+                    data-index="${index}"
+                >
+                    View Details
+                </button>
 
-        })
-        .join("");
+            </div>
+        `;
+
+    }).join("");
 
 }
 
@@ -215,43 +209,43 @@ function renderCourses(cards) {
 
 function renderTestimonials(list) {
 
-    testimonialsGrid.innerHTML = list
-        .map((testimonial) => {
+    if (!testimonialsGrid) return;
 
-            return `
-                <div class="card testimonial">
+    testimonialsGrid.innerHTML = list.map((testimonial) => {
 
-                    <i class="${testimonial.icon} quote-icon"></i>
+        return `
+            <div class="card testimonial">
 
-                    <p>
-                        ${testimonial.text}
-                    </p>
+                <i class="${testimonial.icon || ""} quote-icon"></i>
 
-                    <div class="user">
+                <p>
+                    ${testimonial.text || ""}
+                </p>
 
-                        <i class="${testimonial.userIcon}"></i>
+                <div class="user">
 
-                        <div>
+                    <i class="${testimonial.userIcon || ""}"></i>
 
-                            <strong>
-                                ${testimonial.name}
-                            </strong>
+                    <div>
 
-                            <br>
+                        <strong>
+                            ${testimonial.name || ""}
+                        </strong>
 
-                            <span>
-                                ${testimonial.role}
-                            </span>
+                        <br>
 
-                        </div>
+                        <span>
+                            ${testimonial.role || ""}
+                        </span>
 
                     </div>
 
                 </div>
-            `;
 
-        })
-        .join("");
+            </div>
+        `;
+
+    }).join("");
 
 }
 
@@ -264,8 +258,7 @@ getData();
    ==> API Methods + find()
    ===================================================== */
 
-const modal =
-    document.getElementById("modal");
+const modal = document.getElementById("modal");
 
 const modalContent =
     document.getElementById("modal-content");
@@ -276,48 +269,47 @@ const modalClose =
 
 /* Event Delegation */
 
-coursesGrid.addEventListener("click", (e) => {
+if (coursesGrid) {
 
-    const btn =
-        e.target.closest(".details-btn");
+    coursesGrid.addEventListener("click", (e) => {
 
-    if (!btn) return;
+        const btn = e.target.closest(".details-btn");
 
+        if (!btn) return;
 
-    const index =
-        Number(btn.dataset.index);
+        const index = Number(btn.dataset.index);
 
+        const course = courses.find((course, i) => i === index);
 
-    const course =
-        courses.find((course, i) => i === index);
+        if (course) {
+            openModal(course);
+        }
 
+    });
 
-    if (course) {
-
-        openModal(course);
-    }
-
-});
+}
 
 
 /* Open Modal */
 
 function openModal(course) {
 
+    if (!modal || !modalContent) return;
+
     modalContent.innerHTML = `
 
-        <i class="${course.icon} big-icon"></i>
+        <i class="${course.icon || ""} big-icon"></i>
 
         <h2>
-            ${course.title}
+            ${course.title || "Untitled Course"}
         </h2>
 
         <p>
-            ${course.description}
+            ${course.description || ""}
         </p>
 
         <a
-            href="register.html?course=${encodeURIComponent(course.title)}"
+            href="register.html?course=${encodeURIComponent(course.title || "")}"
             class="btn"
         >
             Register In This Course
@@ -325,8 +317,8 @@ function openModal(course) {
 
     `;
 
-
     modal.classList.add("open");
+
 }
 
 
@@ -334,24 +326,31 @@ function openModal(course) {
 
 function closeModal() {
 
-    modal.classList.remove("open");
+    if (modal) {
+        modal.classList.remove("open");
+    }
 
 }
 
 
-modalClose.addEventListener("click", closeModal);
+if (modalClose) {
+    modalClose.addEventListener("click", closeModal);
+}
 
 
 /* Close when clicking outside */
 
-modal.addEventListener("click", (e) => {
+if (modal) {
 
-    if (e.target === modal) {
+    modal.addEventListener("click", (e) => {
 
-        closeModal();
-    }
+        if (e.target === modal) {
+            closeModal();
+        }
 
-});
+    });
+
+}
 
 
 /* Close with Escape */
@@ -359,7 +358,6 @@ modal.addEventListener("click", (e) => {
 document.addEventListener("keydown", (e) => {
 
     if (e.key === "Escape") {
-
         closeModal();
     }
 
@@ -371,39 +369,38 @@ document.addEventListener("keydown", (e) => {
    ==> setTimeout + setInterval
    ===================================================== */
 
-const counters =
-    document.querySelectorAll(".counter");
+const counters = document.querySelectorAll(".counter");
 
 
 function startCounter(element) {
 
-    const target =
-        Number(element.dataset.target);
+    const target = Number(element.dataset.target);
+
+    if (!Number.isFinite(target) || target <= 0) {
+        element.textContent = "0";
+        return;
+    }
 
     const duration = 2000;
 
-    const step =
-        Math.max(
-            1,
-            Math.floor(target / (duration / 20))
-        );
-
+    const step = Math.max(
+        1,
+        Math.ceil(target / (duration / 20))
+    );
 
     let current = 0;
-
 
     const timer = setInterval(() => {
 
         current += step;
-
 
         if (current >= target) {
 
             current = target;
 
             clearInterval(timer);
-        }
 
+        }
 
         element.textContent = current;
 
@@ -426,32 +423,33 @@ setTimeout(() => {
    ==> Conditions + Window Scrolling + Events
    ===================================================== */
 
-const scrollBtn =
-    document.getElementById("scroll-btn");
+const scrollBtn = document.getElementById("scroll-btn");
 
 
-window.addEventListener("scroll", () => {
+if (scrollBtn) {
 
-    if (window.scrollY > 300) {
+    window.addEventListener("scroll", () => {
 
-        scrollBtn.classList.add("show");
+        if (window.scrollY > 300) {
 
-    } else {
+            scrollBtn.classList.add("show");
 
-        scrollBtn.classList.remove("show");
-    }
+        } else {
 
-});
+            scrollBtn.classList.remove("show");
 
-
-scrollBtn.addEventListener("click", () => {
-
-    window.scrollTo({
-
-        top: 0,
-
-        behavior: "smooth"
+        }
 
     });
 
-});
+
+    scrollBtn.addEventListener("click", () => {
+
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth"
+        });
+
+    });
+
+}
